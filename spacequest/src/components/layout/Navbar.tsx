@@ -1,21 +1,23 @@
-import { NavLink } from "react-router-dom";
-import { User, Rocket, Globe, Film } from "lucide-react";
+import { NavLink } from "react-router-dom"
+import { User, Rocket, Globe, Film, Dna, Car } from "lucide-react"
 
 type NavItem = {
-  name: string;
-  path: string;
-  icon: React.ElementType;
-};
+  name: string
+  path: string
+  icon: React.ElementType
+}
 
 export default function Navbar() {
-  const logoColor = "bg-yellow-400";
+  const logoColor = "bg-yellow-400"
 
   const navItems: NavItem[] = [
     { name: "Characters", path: "/characters", icon: User },
     { name: "Starships", path: "/starships", icon: Rocket },
     { name: "Planets", path: "/planets", icon: Globe },
+    { name: "Species", path: "/species", icon: Dna },
+    { name: "Vehicles", path: "/vehicles", icon: Car },
     { name: "Films", path: "/films", icon: Film },
-  ];
+  ]
 
   return (
     <nav className="w-full bg-gray-900 text-white shadow-md">
@@ -27,7 +29,9 @@ export default function Navbar() {
           >
             SQ
           </div>
-          <span className="text-lg font-semibold tracking-wide">SpaceQuest</span>
+          <span className="text-lg font-semibold tracking-wide">
+            SpaceQuest
+          </span>
         </div>
 
         {/* Links */}
@@ -41,7 +45,7 @@ export default function Navbar() {
                     "flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition",
                     isActive
                       ? `${logoColor} text-gray-900`
-                      : "text-gray-300 hover:text-gray-900 hover:bg-yellow-400",
+                      : "text-gray-300 hover:bg-yellow-400 hover:text-gray-900",
                   ].join(" ")
                 }
               >
@@ -53,5 +57,5 @@ export default function Navbar() {
         </ul>
       </div>
     </nav>
-  );
+  )
 }

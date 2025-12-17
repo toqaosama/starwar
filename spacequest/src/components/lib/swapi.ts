@@ -1,6 +1,6 @@
 import type { SwapiListResponse } from "../../types/swapi";
 
-const BASE = "https://swapi.info/api"; // SWAPI Reborn base
+const BASE = "https://swapi.info/api";
 
 export async function fetchSwapiList<T>(
   resource: string,
@@ -8,8 +8,10 @@ export async function fetchSwapiList<T>(
   searchTerm: string,
   signal?: AbortSignal
 ): Promise<SwapiListResponse<T>> {
-  // Use the slash version to match what SWAPI typically expects
-  const url = new URL(`${BASE}/${resource}/`);
+  // ✅ IMPORTANT: no trailing slash for swapi.info list endpoints
+  const url = new URL(`${BASE}/${resource}`);
+
+  // Some resources support paging/search. If it’s ignored, it’s fine.
   url.searchParams.set("page", String(page));
   if (searchTerm.trim()) url.searchParams.set("search", searchTerm.trim());
 
@@ -23,7 +25,7 @@ export async function fetchSwapiList<T>(
     return json as SwapiListResponse<T>;
   }
 
-  // Sometimes APIs return arrays directly
+  // If the API returns an array directly
   if (Array.isArray(json)) {
     return {
       count: json.length,

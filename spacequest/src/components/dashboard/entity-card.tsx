@@ -1,44 +1,66 @@
+interface EntityCardProps {
+  title: string
+  subtitle?: string
+  badges?: string[]
+  onClick?: () => void
+}
+
 export function EntityCard({
   title,
   subtitle,
-  badges,
+  badges = [],
   onClick,
-}: {
-  title: string;
-  subtitle?: string;
-  badges?: string[];
-  onClick: () => void;
-}) {
-  const safeTitle = title?.trim() || "Unknown";
-  const initial = safeTitle.charAt(0).toUpperCase();
-
+}: EntityCardProps) {
   return (
     <button
       onClick={onClick}
-      className="group text-left rounded-xl bg-gray-900 p-5 shadow-md ring-1 ring-gray-800 transition hover:-translate-y-1 hover:shadow-xl"
+      className="
+        h-full w-full
+        rounded-2xl
+        border border-white/10
+        bg-white/5
+        backdrop-blur
+        p-5
+        text-left
+        transition
+        hover:border-yellow-400/40
+        hover:bg-white/10
+        focus:outline-none
+      "
     >
-      <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-yellow-400 text-lg font-bold text-gray-900">
-        {initial}
-      </div>
+      {/* FLEX COLUMN IS THE KEY */}
+      <div className="flex h-full flex-col">
+        {/* Header */}
+        <div className="flex items-start gap-4">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-yellow-400 text-lg font-bold text-black">
+            {title.charAt(0)}
+          </div>
 
-      <h3 className="mb-1 text-lg font-semibold text-white transition group-hover:text-yellow-400">
-        {safeTitle}
-      </h3>
-
-      {subtitle && <p className="text-sm text-gray-400">{subtitle}</p>}
-
-      {badges && badges.length > 0 && (
-        <div className="mt-3 flex flex-wrap gap-2">
-          {badges.map((b, i) => (
-            <span
-              key={`${b}-${i}`}
-              className="rounded-full bg-gray-950 px-3 py-1 text-xs text-gray-300 ring-1 ring-gray-800"
-            >
-              {b}
-            </span>
-          ))}
+          <div>
+            <h3 className="text-lg font-semibold text-white">{title}</h3>
+            {subtitle && (
+              <p className="mt-1 text-sm text-white/60">{subtitle}</p>
+            )}
+          </div>
         </div>
-      )}
+
+        {/* Spacer forces footer to bottom */}
+        <div className="flex-1" />
+
+        {/* Badges */}
+        {badges.length > 0 && (
+          <div className="mt-4 flex flex-wrap gap-2">
+            {badges.map((badge, i) => (
+              <span
+                key={i}
+                className="rounded-full border border-white/10 bg-black/30 px-3 py-1 text-xs text-white/70"
+              >
+                {badge}
+              </span>
+            ))}
+          </div>
+        )}
+      </div>
     </button>
-  );
+  )
 }

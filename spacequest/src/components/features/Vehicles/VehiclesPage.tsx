@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useMemo, useState } from "react";
-import type { Planet } from "../../../types/swapi";
+import type { Vehicle } from "../../../types/swapi";
 import { useSwapi } from "../../hooks/use-swapi";
 import { SearchBar } from "../../dashboard/search-bar";
 import { EntityCard } from "../../dashboard/entity-card";
@@ -17,9 +17,9 @@ function safeText(v: unknown, fallback = "—") {
   return s.length ? s : fallback;
 }
 
-export default function PlanetsPage() {
+export default function VehiclesPage() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedPlanet, setSelectedPlanet] = useState<Planet | null>(null);
+  const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null);
 
   const {
     data,
@@ -32,36 +32,37 @@ export default function PlanetsPage() {
     goToNextPage,
     goToPreviousPage,
     refresh,
-  } = useSwapi<Planet>("planets", 1, searchTerm);
+  } = useSwapi<Vehicle>("vehicles", 1, searchTerm);
 
   const handleSearch = useCallback((term: string) => {
     setSearchTerm(term);
   }, []);
 
   const detailSections = useMemo(() => {
-    if (!selectedPlanet) return [];
+    if (!selectedVehicle) return [];
 
     return [
-      { label: "Climate", value: safeText(selectedPlanet.climate) },
-      { label: "Terrain", value: safeText(selectedPlanet.terrain) },
-      { label: "Population", value: safeText(selectedPlanet.population) },
-      { label: "Diameter", value: `${safeText(selectedPlanet.diameter)} km` },
-      { label: "Gravity", value: safeText(selectedPlanet.gravity) },
-      { label: "Orbital Period", value: `${safeText(selectedPlanet.orbital_period)} days` },
-      { label: "Rotation Period", value: `${safeText(selectedPlanet.rotation_period)} hours` },
-      { label: "Surface Water", value: `${safeText(selectedPlanet.surface_water)}%` },
+      { label: "Model", value: safeText(selectedVehicle.model) },
+      { label: "Class", value: safeText(selectedVehicle.vehicle_class) },
+      { label: "Manufacturer", value: safeText(selectedVehicle.manufacturer) },
+      { label: "Cost", value: `${safeText(selectedVehicle.cost_in_credits)} credits` },
+      { label: "Length", value: `${safeText(selectedVehicle.length)} m` },
+      { label: "Crew", value: safeText(selectedVehicle.crew) },
+      { label: "Passengers", value: safeText(selectedVehicle.passengers) },
+      { label: "Max Speed", value: safeText(selectedVehicle.max_atmosphering_speed) },
+      { label: "Cargo Capacity", value: safeText(selectedVehicle.cargo_capacity) },
+      { label: "Consumables", value: safeText(selectedVehicle.consumables) },
     ];
-  }, [selectedPlanet]);
+  }, [selectedVehicle]);
 
-  // Better loading check (your hook returns [] always)
   if (loading && (!data || data.length === 0)) {
     return (
       <div className="min-h-[calc(100vh-64px)] bg-gradient-to-b from-gray-950 via-gray-950 to-black">
         <div className="w-full px-4 sm:px-6 lg:px-10 py-8">
           <div className="rounded-2xl border border-white/10 bg-gradient-to-b from-white/5 to-white/[0.02] p-6 shadow-[0_0_0_1px_rgba(255,255,255,0.04)]">
-            <p className="text-sm tracking-widest text-yellow-300/80">SPACEQUEST • PLANETS</p>
-            <h1 className="mt-1 text-3xl sm:text-4xl font-extrabold text-white">Planets</h1>
-            <p className="mt-2 text-sm text-white/60">Scanning star systems...</p>
+            <p className="text-sm tracking-widest text-yellow-300/80">SPACEQUEST • VEHICLES</p>
+            <h1 className="mt-1 text-3xl sm:text-4xl font-extrabold text-white">Vehicles</h1>
+            <p className="mt-2 text-sm text-white/60">Loading ground units...</p>
           </div>
 
           <div className="mt-6 rounded-2xl border border-white/10 bg-black/30 p-6">
@@ -78,7 +79,7 @@ export default function PlanetsPage() {
         <div className="w-full px-4 sm:px-6 lg:px-10 py-8">
           <div className="rounded-2xl border border-red-500/20 bg-red-500/5 p-6">
             <p className="text-sm tracking-widest text-red-300/80">ERROR</p>
-            <h1 className="mt-1 text-3xl sm:text-4xl font-extrabold text-white">Planets</h1>
+            <h1 className="mt-1 text-3xl sm:text-4xl font-extrabold text-white">Vehicles</h1>
             <div className="mt-4">
               <ErrorState message={error} onRetry={refresh} />
             </div>
@@ -101,10 +102,10 @@ export default function PlanetsPage() {
         <div className="rounded-2xl border border-white/10 bg-gradient-to-b from-white/5 to-white/[0.02] p-6 shadow-[0_0_0_1px_rgba(255,255,255,0.04)]">
           <div className="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-5">
             <div>
-              <p className="text-sm tracking-widest text-yellow-300/80">SPACEQUEST • PLANETS</p>
-              <h1 className="mt-1 text-3xl sm:text-4xl font-extrabold text-white">Planets</h1>
+              <p className="text-sm tracking-widest text-yellow-300/80">SPACEQUEST • VEHICLES</p>
+              <h1 className="mt-1 text-3xl sm:text-4xl font-extrabold text-white">Vehicles</h1>
               <p className="mt-2 text-sm text-white/60">
-                Search planets, open a card, and explore planetary details in the modal.
+                Search vehicles, open a card, and explore specs in the modal.
               </p>
 
               <div className="mt-4 flex flex-wrap gap-2">
@@ -130,7 +131,7 @@ export default function PlanetsPage() {
             {/* Search */}
             <div className="w-full xl:w-[520px]">
               <div className="rounded-2xl border border-white/10 bg-black/30 p-3">
-                <SearchBar onSearch={handleSearch} placeholder="Search planets..." />
+                <SearchBar onSearch={handleSearch} placeholder="Search vehicles..." />
               </div>
             </div>
           </div>
@@ -141,18 +142,18 @@ export default function PlanetsPage() {
           <>
             <div className="rounded-2xl border border-white/10 bg-black/30 p-4 sm:p-6">
               <div className="grid items-stretch gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 auto-rows-[1fr]">
-                {data.map((planet, idx) => (
-                  <div key={`${planet.name}-${idx}`} className="h-full transition-transform hover:-translate-y-0.5">
+                {data.map((v, idx) => (
+                  <div key={`${v.name}-${idx}`} className="h-full transition-transform hover:-translate-y-0.5">
                     <div className="h-full">
                       <EntityCard
-                        title={safeText(planet.name)}
-                        subtitle={`${safeText(planet.climate)} • ${safeText(planet.terrain)}`}
+                        title={safeText(v.name)}
+                        subtitle={`${safeText(v.vehicle_class)} • ${safeText(v.model)}`}
                         badges={[
-                          `Pop: ${safeText(planet.population)}`,
-                          `Diam: ${safeText(planet.diameter)}km`,
-                          `Water: ${safeText(planet.surface_water)}%`,
+                          `Crew: ${safeText(v.crew)}`,
+                          `Passengers: ${safeText(v.passengers)}`,
+                          `Speed: ${safeText(v.max_atmosphering_speed)}`,
                         ]}
-                        onClick={() => setSelectedPlanet(planet)}
+                        onClick={() => setSelectedVehicle(v)}
                       />
                     </div>
                   </div>
@@ -173,17 +174,17 @@ export default function PlanetsPage() {
           </>
         ) : (
           <div className="rounded-2xl border border-white/10 bg-black/30 p-6">
-            <EmptyState title="No planets found" description="Try adjusting your search criteria" />
+            <EmptyState title="No vehicles found" description="Try adjusting your search criteria" />
           </div>
         )}
 
         <EntityDetailModal
-          open={!!selectedPlanet}
-          onOpenChange={(open) => !open && setSelectedPlanet(null)}
-          title={selectedPlanet?.name || ""}
+          open={!!selectedVehicle}
+          onOpenChange={(open) => !open && setSelectedVehicle(null)}
+          title={selectedVehicle?.name || ""}
           description={
-            selectedPlanet
-              ? `${safeText(selectedPlanet.climate)} • Terrain: ${safeText(selectedPlanet.terrain)}`
+            selectedVehicle
+              ? `${safeText(selectedVehicle.vehicle_class)} • Model: ${safeText(selectedVehicle.model)}`
               : ""
           }
           sections={detailSections}

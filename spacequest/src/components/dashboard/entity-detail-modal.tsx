@@ -1,50 +1,110 @@
+"use client";
+
+import { useEffect } from "react";
+import { X } from "lucide-react";
+
+type Section = {
+  label: string;
+  value: string;
+};
+
+type Props = {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  title: string;
+  description?: string;
+  sections: Section[];
+};
+
 export function EntityDetailModal({
   open,
   onOpenChange,
   title,
   description,
   sections,
-}: {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  title: string;
-  description?: string;
-  sections: { label: string; value: string }[];
-}) {
+}: Props) {
+  // Close on ESC
+  useEffect(() => {
+    if (!open) return;
+
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onOpenChange(false);
+    };
+
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open, onOpenChange]);
+
   if (!open) return null;
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4"
-      onClick={() => onOpenChange(false)}
-      role="dialog"
-      aria-modal="true"
-    >
+    <div className="fixed inset-0 z-50 flex items-center justify-center">
+      {/* Backdrop */}
       <div
-        className="w-full max-w-lg rounded-2xl bg-gray-900 p-5 ring-1 ring-gray-800"
-        onClick={(e) => e.stopPropagation()}
+        className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+        onClick={() => onOpenChange(false)}
+      />
+
+      {/* Modal */}
+      <div
+        className="
+          relative z-10
+          w-[95vw] max-w-3xl
+          max-h-[90vh]
+          overflow-hidden
+          rounded-2xl
+          border border-white/10
+          bg-gradient-to-b from-gray-900 via-gray-950 to-black
+          shadow-2xl
+          animate-in fade-in zoom-in-95
+        "
       >
-        <div className="mb-2">
-          <h2 className="text-xl font-semibold text-white">{title}</h2>
-          {description && <p className="mt-1 text-sm text-gray-400">{description}</p>}
-        </div>
+        {/* Header */}
+        <div className="flex items-start justify-between gap-4 border-b border-white/10 p-6">
+          <div>
+            <h2 className="text-2xl font-extrabold text-white">{title}</h2>
+            {description && (
+              <p className="mt-1 text-sm text-white/60">{description}</p>
+            )}
+          </div>
 
-        <div className="mt-4 grid grid-cols-2 gap-3">
-          {sections.map((s) => (
-            <div key={s.label} className="rounded-lg bg-gray-950 p-3 ring-1 ring-gray-800">
-              <div className="text-xs text-gray-500">{s.label}</div>
-              <div className="mt-1 font-medium text-gray-200">{s.value}</div>
-            </div>
-          ))}
-        </div>
-
-        <div className="mt-5 flex justify-end">
           <button
             onClick={() => onOpenChange(false)}
-            className="rounded-md bg-yellow-400 px-4 py-2 text-sm font-semibold text-gray-900 hover:opacity-90"
+            className="rounded-lg p-2 text-white/60 hover:bg-white/10 hover:text-white"
+            aria-label="Close"
           >
-            Close
+            <X className="h-5 w-5" />
           </button>
+        </div>
+
+        {/* Content */}
+        <div className="max-h-[calc(90vh-96px)] overflow-y-auto p-6">
+          <div className="grid gap-4 sm:grid-cols-2">
+            {sections.map((section) => {
+              const isCrawl = section.label.toLowerCase().includes("crawl");
+
+              return (
+                <div
+                  key={section.label}
+                  className="rounded-xl border border-white/10 bg-black/30 p-4"
+                >
+                  <p className="text-xs tracking-widest text-yellow-300/80">
+                    {section.label}
+                  </p>
+
+                  {isCrawl ? (
+                    <div className="mt-2 max-h-60 overflow-y-auto whitespace-pre-line pr-2 text-sm leading-relaxed text-white/90">
+                      {section.value}
+                    </div>
+                  ) : (
+                    <p className="mt-2 text-sm font-medium text-white">
+                      {section.value}
+                    </p>
+                  )}
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
     </div>
