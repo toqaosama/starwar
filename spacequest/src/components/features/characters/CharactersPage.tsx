@@ -1,7 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
 import type { Person } from "../../../types/swapi";
 import { useSwapi } from "../../hooks/use-swapi";
-
 import { SearchBar } from "../../dashboard/search-bar";
 import { EntityCard } from "../../dashboard/entity-card";
 import { EntityDetailModal } from "../../dashboard/entity-detail-modal";
@@ -26,6 +25,8 @@ export default function CharactersPage() {
     goToPreviousPage,
     refresh,
   } = useSwapi<Person>("people", 1, searchTerm);
+
+  console.log(data) // CHAT GPT PLEASE FIX THAT, I AM GETTING data: unde
 
   const handleSearch = useCallback((term: string) => {
     setSearchTerm(term);

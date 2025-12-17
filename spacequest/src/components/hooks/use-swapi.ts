@@ -1,8 +1,9 @@
+// src/hooks/use-swapi.ts
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { fetchSwapiList } from "../lib/swapi";
 
 export function useSwapi<T>(resource: string, initialPage = 1, searchTerm = "") {
-  const [data, setData] = useState<T[] | null>(null);
+  const [data, setData] = useState<T[]>([]); // ✅ always array
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
   const [page, setPage] = useState<number>(initialPage);
@@ -13,7 +14,7 @@ export function useSwapi<T>(resource: string, initialPage = 1, searchTerm = "") 
 
   const abortRef = useRef<AbortController | null>(null);
 
-  // Reset to page 1 when search term changes
+  // Reset to page 1 when search changes
   useEffect(() => {
     setPage(1);
   }, [searchTerm]);
@@ -29,13 +30,17 @@ export function useSwapi<T>(resource: string, initialPage = 1, searchTerm = "") 
 
       const res = await fetchSwapiList<T>(resource, page, searchTerm, controller.signal);
 
-      setData(res.results);
-      setNextPage(res.next);
-      setPreviousPage(res.previous);
-      setTotalCount(res.count);
+      setData(res.results ?? []); // ✅ never undefined
+      setNextPage(res.next ?? null);
+      setPreviousPage(res.previous ?? null);
+      setTotalCount(res.count ?? 0);
     } catch (e) {
       if (e instanceof DOMException && e.name === "AbortError") return;
       setError(e instanceof Error ? e.message : "Unknown error");
+      setData([]); // ✅ keep stable
+      setNextPage(null);
+      setPreviousPage(null);
+      setTotalCount(0);
     } finally {
       setLoading(false);
     }
